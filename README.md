@@ -1,1 +1,1 @@
-# react-pokemonn-zukan
+# react-pokemon-zukan
