@@ -29,4 +29,3 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon }) => {
 };
 
 export default PokemonCard;
-
