@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { apiQueryKeys } from '../queryKeys.ts';
 import { fetchPokemonListWithJapaneseNames } from '../api/pokemonWithJapaneseName.ts';
-import type { PokemonWithJapaneseName } from '../api/pokemonWithJapaneseName.ts';
+import type { PokemonListWithJapaneseNames, PokemonWithJapaneseName } from '../api/pokemonWithJapaneseName.ts';
 import PokemonCard from '../components/PokemonCard.tsx';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -16,11 +16,15 @@ const PokemonList: React.FC = () => {
     isFetchingNextPage,
     status,
     isLoading,
-  } = useInfiniteQuery({
-    queryKey: [apiQueryKeys.pokemon.list()],
-    queryFn: ({ pageParam = 0 }) => fetchPokemonListWithJapaneseNames(pageParam),
+  } = useInfiniteQuery<PokemonListWithJapaneseNames, Error>({
+    queryKey: apiQueryKeys.pokemon.list(),
+    queryFn: ({ pageParam = 0 }) =>
+      fetchPokemonListWithJapaneseNames(Number(pageParam)),
     initialPageParam: 0,
-    getNextPageParam: (lastPage, pages) => {
+    getNextPageParam: (
+      lastPage: PokemonListWithJapaneseNames,
+      pages: PokemonListWithJapaneseNames[]
+    ) => {
       if (lastPage.next) {
         return pages.length * 20;
       }
@@ -53,7 +57,7 @@ const PokemonList: React.FC = () => {
   return (
     <div className="p-4">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {data?.pages.map((page) =>
+        {data?.pages.map((page: PokemonListWithJapaneseNames) =>
           page.results.map((pokemon: PokemonWithJapaneseName) => (
             <PokemonCard key={pokemon.name} pokemon={pokemon} />
           ))
